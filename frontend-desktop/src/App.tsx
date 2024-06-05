@@ -1,51 +1,52 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
+import { useRef, useState } from "react";
 import "./App.css";
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
+const displayMediaOptions = {
+  video: {
+    chromeMediaSource: { exact: 'monitor' },
+  },
+  audio: false,
+};
+
+function App() {
+  const streamRef = useRef<MediaStream | null>(null)
+  const videoRef = useRef<HTMLVideoElement | null>(null)
+  const [isStart, setIsStart] = useState(false);
+  async function startCapture() {
+    try {
+      streamRef.current = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions as DisplayMediaStreamOptions);
+    } catch (err) {
+      console.error(`Error: ${err}`);
+    }
+    console.log({ ref: streamRef });
+    return streamRef.current;
+  }
+
+  const handleRecord = async () => {
+    if (!videoRef.current) return
+    videoRef.current.srcObject = await startCapture();
+    setIsStart(true)
+  }
+
+  const handleStop = () =>{
+    if (!videoRef.current || !streamRef.current) return;
+
+    // Stop all tracks
+    streamRef.current.getTracks().forEach(track => track.stop());
+    videoRef.current.srcObject = null
+    setIsStart(false)
   }
 
   return (
     <div className="container">
-      <h1>Welcome to Tauri!</h1>
-
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-
-      <p>{greetMsg}</p>
+      <video
+        width={"100%"}
+        height={450}
+        ref={videoRef}
+        autoPlay
+        muted />
+      <button type="button" style={{ marginTop: "20px" }} onClick={isStart ? handleStop : handleRecord}>{isStart ? "Stop" : "Start"} Record</button>
     </div>
   );
 }

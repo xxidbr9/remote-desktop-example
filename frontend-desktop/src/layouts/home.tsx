@@ -57,9 +57,9 @@ export function HomeLayout() {
         <div className="titlebar-button" onClick={handleMin} id="titlebar-minimize">
           <Minus size={14} />
         </div>
-        <div data-tauri-maximize-button-region className="titlebar-button" onClick={handleMax} id="titlebar-maximize">
+        {/* <div data-tauri-maximize-button-region className="titlebar-button" onClick={handleMax} id="titlebar-maximize">
           <Cards size={14} />
-        </div>
+        </div> */}
         <div className="titlebar-button btn-danger" onClick={handleClose} id="titlebar-close">
           <X size={14} />
         </div>

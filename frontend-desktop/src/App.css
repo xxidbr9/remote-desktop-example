@@ -114,3 +114,31 @@ button {
     background-color: #0f0f0f69;
   }
 }
+
+
+
+.titlebar {
+  height: 36px;
+  /* background: #329ea3; */
+  user-select: none;
+  display: flex;
+  justify-content: flex-end;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.titlebar-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+}
+.titlebar-button:hover {
+  background: #57575798;
+}
+
+.btn-danger:hover {
+  background: #DB192B;
+}

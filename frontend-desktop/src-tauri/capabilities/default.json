@@ -17,6 +17,12 @@
     "shell:allow-open",
     "websocket:default",
     "dialog:default",
-    "notification:default"
+    "notification:default",
+    "window:default",
+    "window:allow-start-dragging",
+    "window:allow-close",
+    "window:allow-minimize",
+    "window:allow-toggle-maximize",
+    "window:allow-internal-toggle-maximize"
   ]
 }

@@ -1,5 +1,5 @@
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
-import { HomeLayout } from '../layouts'
+import { HomeLayout, RemoteLayout } from '../layouts'
 const rootRoute = createRootRoute()
 
 const indexRoute = createRoute({
@@ -11,6 +11,7 @@ const indexRoute = createRoute({
 const remoteRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/remote/$id',
+  component: RemoteLayout
 });
 
 

@@ -3,9 +3,12 @@
   "identifier": "default",
   "description": "Capability for the main window",
   "windows": [
-    "main"
+    "main",
+    "remote"
   ],
   "permissions": [
+    "clipboard-manager:allow-read-text",
+    "clipboard-manager:allow-write-text",
     "path:default",
     "event:default",
     "window:default",
@@ -18,11 +21,14 @@
     "websocket:default",
     "dialog:default",
     "notification:default",
+    "notification:allow-is-permission-granted",
     "window:default",
     "window:allow-start-dragging",
     "window:allow-close",
     "window:allow-minimize",
     "window:allow-toggle-maximize",
-    "window:allow-internal-toggle-maximize"
+    "window:allow-internal-toggle-maximize",
+    "window:allow-set-fullscreen",
+    "clipboard-manager:default"
   ]
 }

@@ -1,9 +1,8 @@
-import React from 'react'
-import { Cards, X, Minus } from "@phosphor-icons/react";
+import { X, Minus } from "@phosphor-icons/react";
 import { Window } from '@tauri-apps/api/window';
 import { useTheme } from "@/hooks/use-theme";
 import { MoonStars, SunDim } from "@phosphor-icons/react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui';
 import { useDeviceTheme } from '@/hooks/dark-provider';
 
 const appWindow = new Window('main');
@@ -15,9 +14,9 @@ export const Titlebar = () => {
   const handleMin = () => {
     appWindow.minimize()
   }
-  const handleMax = () => {
-    appWindow.toggleMaximize()
-  }
+  // const handleMax = () => {
+  //   appWindow.toggleMaximize()
+  // }
   const handleClose = () => {
     appWindow.close()
   }

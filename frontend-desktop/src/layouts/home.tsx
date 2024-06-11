@@ -1,8 +1,10 @@
 import { useRef, useState } from "react";
 import React from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui";
+import { Button, InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, Tabs, TabsContent, TabsList, TabsTrigger, Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui";
 import { Titlebar } from '@/components/common'
-
+import { invoke } from "@tauri-apps/api/core";
+import { readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
+import { Clipboard, ClipboardText } from "@phosphor-icons/react";
 
 const displayMediaOptions = {
   video: {
@@ -42,14 +44,11 @@ export function HomeLayout() {
   }
 
 
-
-
-
   return (
     <React.Fragment>
       <Titlebar />
 
-      <div className="container">
+      <div className="container h-[324px]" >
         {/* <video
           width={"100%"}
           height={450}
@@ -58,15 +57,19 @@ export function HomeLayout() {
           muted /> */}
         {/* <Button type="button" onClick={isStart ? handleStop : handleRecord}>{isStart ? "Stop" : "Start"} Record</Button> */}
 
-        <Tabs defaultValue="remote" >
-          <div className="w-full flex items-center justify-center">
+        <Tabs defaultValue="remote" className="h-full">
+          <div className="w-full flex items-center justify-center pb-20">
             <TabsList className=" items-center">
               <TabsTrigger value="remote">Remote</TabsTrigger>
               <TabsTrigger value="share">Share Screen</TabsTrigger>
             </TabsList>
           </div>
-          <TabsContent value="remote">Make changes to your account here.</TabsContent>
-          <TabsContent value="share">Change your password here.</TabsContent>
+          <TabsContent value="remote">
+            <RemoteContainer />
+          </TabsContent>
+          <TabsContent value="share">
+            <ShareScreenArea />
+          </TabsContent>
         </Tabs>
 
 
@@ -75,4 +78,91 @@ export function HomeLayout() {
   );
 }
 
+
+const RemoteContainer = () => {
+
+  const [code, setCode] = useState("")
+
+  const handleOpenRemote = async () => {
+    invoke("create_window", { url: `/remote/${code}` })
+  }
+  const handlePaste = async () => {
+    const text = await readText()
+    setCode(text)
+  }
+  return (
+    <div className="flex flex-col gap-y-4 h-full justify-between">
+      <div className="w-full flex flex-col items-center justify-center gap-y-5">
+
+        <div className="flex items-center flex-col gap-y-2">
+          <InputOTP maxLength={6} value={code} onChange={setCode}>
+            <InputOTPGroup>
+              <InputOTPSlot index={0} />
+              <InputOTPSlot index={1} />
+              <InputOTPSlot index={2} />
+            </InputOTPGroup>
+            <InputOTPSeparator />
+            <InputOTPGroup>
+              <InputOTPSlot index={3} />
+              <InputOTPSlot index={4} />
+              <InputOTPSlot index={5} />
+            </InputOTPGroup>
+          </InputOTP>
+          <Tooltip>
+            <TooltipTrigger asChild >
+              <Button onClick={handlePaste} variant={"secondary"} size={"icon"} >
+                <ClipboardText size={16} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent data-side="bottom">
+              <p>Paste to box</p>
+            </TooltipContent>
+          </Tooltip>
+
+        </div>
+        <div className="flex flex-col gap-y-2 text-center">
+          <span className="text-xs text-foreground ">Copy other code and paste for remote other pc.</span>
+        </div>
+      </div>
+      <Button onClick={handleOpenRemote} disabled={!code}>
+        Remote Now
+      </Button>
+    </div>
+  )
+};
+
+const ShareScreenArea = () => {
+  const value = "333333"
+
+  const handleCopy = () => {
+    writeText(value);
+  }
+  return (
+    <div className="flex flex-col gap-y-4 h-full justify-between">
+      <div className="w-full flex flex-col items-center justify-center gap-y-16">
+
+        <InputOTP maxLength={6} value={value} disabled>
+          <InputOTPGroup>
+            <InputOTPSlot index={0} />
+            <InputOTPSlot index={1} />
+            <InputOTPSlot index={2} />
+          </InputOTPGroup>
+          <InputOTPSeparator />
+          <InputOTPGroup>
+            <InputOTPSlot index={3} />
+            <InputOTPSlot index={4} />
+            <InputOTPSlot index={5} />
+          </InputOTPGroup>
+        </InputOTP>
+
+        <div className="flex flex-col gap-y-2 text-center">
+          <span className="text-xs text-foreground ">Copy this code and share to someone you trust!!</span>
+        </div>
+      </div>
+      <Button onClick={handleCopy} className="">
+        Copy code
+      </Button>
+    </div>
+  )
+}
 

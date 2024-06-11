@@ -13,6 +13,7 @@
       {
         "decorations": false,
         "title": "Remotelify",
+        "label": "main",
         "width": 420,
         "height": 360,
         "center": true,

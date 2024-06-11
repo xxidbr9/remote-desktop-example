@@ -20,4 +20,6 @@ tauri-plugin-dialog = "2.0.0-beta.9"
 tauri-plugin-notification = "2.0.0-beta.7"
 enigo = "=0.2.1"
 windows-capture = "1.2.0"
+tokio = "1.38.0"
+tauri-plugin-clipboard-manager = "2.1.0-beta.4"
 

@@ -1,9 +1,8 @@
 import { useRef, useState } from "react";
 import React from "react";
-import { Window } from '@tauri-apps/api/window';
-import { Cards, X, Minus } from "@phosphor-icons/react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui";
+import { Titlebar } from '@/components/common'
 
-const appWindow = new Window('main');
 
 const displayMediaOptions = {
   video: {
@@ -13,6 +12,7 @@ const displayMediaOptions = {
 };
 
 export function HomeLayout() {
+
   const streamRef = useRef<MediaStream | null>(null)
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const [isStart, setIsStart] = useState(false);
@@ -41,29 +41,14 @@ export function HomeLayout() {
     setIsStart(false)
   }
 
-  const handleMin = () => {
-    appWindow.minimize()
-  }
-  const handleMax = () =>{
-    appWindow.toggleMaximize()
-  }
-  const handleClose = () => {
-    appWindow.close()
-  }
+
+
+
 
   return (
     <React.Fragment>
-      <div data-tauri-drag-region className="titlebar">
-        <div className="titlebar-button" onClick={handleMin} id="titlebar-minimize">
-          <Minus size={14} />
-        </div>
-        {/* <div data-tauri-maximize-button-region className="titlebar-button" onClick={handleMax} id="titlebar-maximize">
-          <Cards size={14} />
-        </div> */}
-        <div className="titlebar-button btn-danger" onClick={handleClose} id="titlebar-close">
-          <X size={14} />
-        </div>
-      </div>
+      <Titlebar />
+
       <div className="container">
         {/* <video
           width={"100%"}
@@ -71,9 +56,22 @@ export function HomeLayout() {
           ref={videoRef}
           autoPlay
           muted /> */}
-        <button type="button" style={{ marginTop: "20px" }} onClick={isStart ? handleStop : handleRecord}>{isStart ? "Stop" : "Start"} Record</button>
+        {/* <Button type="button" onClick={isStart ? handleStop : handleRecord}>{isStart ? "Stop" : "Start"} Record</Button> */}
+
+        <Tabs defaultValue="remote" >
+          <div className="w-full flex items-center justify-center">
+            <TabsList className=" items-center">
+              <TabsTrigger value="remote">Remote</TabsTrigger>
+              <TabsTrigger value="share">Share Screen</TabsTrigger>
+            </TabsList>
+          </div>
+          <TabsContent value="remote">Make changes to your account here.</TabsContent>
+          <TabsContent value="share">Change your password here.</TabsContent>
+        </Tabs>
+
+
       </div>
-    </React.Fragment>
+    </React.Fragment >
   );
 }
 

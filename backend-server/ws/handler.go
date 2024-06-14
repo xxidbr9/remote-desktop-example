@@ -13,7 +13,11 @@ import (
 func HandleWebSocket(c *websocket.Conn) {
 	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
-			{URLs: []string{"stun:0.0.0.0:3478"}},
+			// TODO: change this base on IP
+			{URLs: []string{
+				// "stun:0.0.0.0:3478",
+				"stun:192.168.0.101:3478",
+			}},
 		},
 	})
 	if err != nil {
@@ -29,6 +33,7 @@ func HandleWebSocket(c *websocket.Conn) {
 			log.Printf("Error marshaling candidate: %v", err)
 			return
 		}
+		log.Println(candidate)
 		if err := c.WriteMessage(websocket.TextMessage, candidateJSON); err != nil {
 			log.Printf("Error sending candidate: %v", err)
 		}
@@ -117,7 +122,7 @@ func handleCandidate(peerConnection *webrtc.PeerConnection, message []byte) {
 		log.Printf("Error unmarshal offer: %v", err)
 		return
 	}
-	
+
 	candidateMap, ok := msg["candidate"].(map[string]interface{})
 	if !ok {
 		log.Printf("Invalid candidate format")
@@ -135,8 +140,7 @@ func handleCandidate(peerConnection *webrtc.PeerConnection, message []byte) {
 	if err := json.Unmarshal(candidateJson, &candidate); err != nil {
 		log.Printf("Error unmarshal candidate: %v", err)
 	}
-	
-	
+
 	if err := peerConnection.AddICECandidate(candidate); err != nil {
 		log.Printf("Error adding ICE candidate: %v", err)
 	}

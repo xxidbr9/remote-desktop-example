@@ -5,7 +5,7 @@ let localStream;
 let remoteStream;
 let peerConnection;
 
-const signalingServer = new WebSocket("ws://localhost:8080/ws");
+const signalingServer = new WebSocket("ws://192.168.0.101:8080/ws");
 
 signalingServer.onmessage = async message => {
   const data = JSON.parse(message.data);
@@ -33,7 +33,8 @@ function sendSignalingMessage(message) {
 
 const servers = {
   iceServers: [
-    { urls: "stun:0.0.0.0:3478" } // Replace with your actual STUN server address if different
+    { urls: "stun:192.168.0.101:3478" },
+    // { urls: "stun:0.0.0.0:3478" } // Replace with your actual STUN server address if different
   ]
 };
 
@@ -98,7 +99,6 @@ async function handleOffer(data) {
   };
 
   peerConnection.ontrack = event => {
-
     if (!remoteStream) {
       remoteStream = new MediaStream();
       remoteVideo.srcObject = remoteStream;
@@ -116,9 +116,7 @@ async function handleOffer(data) {
 }
 
 async function handleAnswer(answer) {
-  await peerConnection.setRemoteDescription(
-    new RTCSessionDescription(answer)
-  );
+  await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
 }
 
 async function handleCandidate(data) {

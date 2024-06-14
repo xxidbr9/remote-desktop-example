@@ -9,7 +9,7 @@ import (
 
 // StartStunServer starts a STUN server on the specified address.
 func StartStunServer() {
-	addr := "0.0.0.0:3478"
+	addr := "0.0.0.0:3478" // TODO: change this address base on IP
 	udpAddr, err := net.ResolveUDPAddr("udp", addr)
 	if err != nil {
 		log.Fatalf("Failed to resolve address: %v", err)

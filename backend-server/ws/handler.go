@@ -2,6 +2,7 @@ package internal_ws
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/gofiber/contrib/websocket"
@@ -12,7 +13,7 @@ import (
 func HandleWebSocket(c *websocket.Conn) {
 	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
-			{URLs: []string{"stun:your.server.ip:3478"}},
+			{URLs: []string{"stun:0.0.0.0:3478"}},
 		},
 	})
 	if err != nil {
@@ -34,6 +35,7 @@ func HandleWebSocket(c *websocket.Conn) {
 	})
 
 	peerConnection.OnTrack(func(track *webrtc.TrackRemote, receiver *webrtc.RTPReceiver) {
+		// TODO: store to system
 		log.Println("New track received:", track.ID())
 	})
 
@@ -60,11 +62,31 @@ func HandleWebSocket(c *websocket.Conn) {
 }
 
 func handleOffer(peerConnection *webrtc.PeerConnection, message []byte, c *websocket.Conn) {
-	offer := webrtc.SessionDescription{}
-	if err := json.Unmarshal(message, &offer); err != nil {
+	var msg map[string]interface{}
+	if err := json.Unmarshal(message, &msg); err != nil {
 		log.Printf("Error unmarshal offer: %v", err)
 		return
 	}
+
+	offerMap, ok := msg["offer"].(map[string]interface{})
+	if !ok {
+		log.Printf("Invalid offer format")
+		return
+	}
+
+	sdp, ok := offerMap["sdp"].(string)
+	if !ok {
+		log.Printf("Invalid SDP format")
+		return
+	}
+
+	typeReq := webrtc.NewSDPType(fmt.Sprintf("%s", msg["type"]))
+
+	offer := webrtc.SessionDescription{
+		SDP:  sdp,
+		Type: typeReq,
+	}
+
 	if err := peerConnection.SetRemoteDescription(offer); err != nil {
 		log.Printf("Error setting remote description: %v", err)
 		return
@@ -78,6 +100,7 @@ func handleOffer(peerConnection *webrtc.PeerConnection, message []byte, c *webso
 		log.Printf("Error setting local description: %v", err)
 		return
 	}
+
 	answerJSON, err := json.Marshal(answer)
 	if err != nil {
 		log.Printf("Error marshaling answer: %v", err)
@@ -89,11 +112,31 @@ func handleOffer(peerConnection *webrtc.PeerConnection, message []byte, c *webso
 }
 
 func handleCandidate(peerConnection *webrtc.PeerConnection, message []byte) {
-	candidate := webrtc.ICECandidateInit{}
-	if err := json.Unmarshal(message, &candidate); err != nil {
-		log.Printf("Error unmarshal candidate: %v", err)
+	var msg map[string]interface{}
+	if err := json.Unmarshal(message, &msg); err != nil {
+		log.Printf("Error unmarshal offer: %v", err)
 		return
 	}
+	
+	candidateMap, ok := msg["candidate"].(map[string]interface{})
+	if !ok {
+		log.Printf("Invalid candidate format")
+		return
+	}
+
+	candidateJson, err := json.Marshal(candidateMap)
+
+	if err != nil {
+		log.Printf("Error marshaling candidateMap: %v", err)
+		return
+	}
+	candidate := webrtc.ICECandidateInit{}
+
+	if err := json.Unmarshal(candidateJson, &candidate); err != nil {
+		log.Printf("Error unmarshal candidate: %v", err)
+	}
+	
+	
 	if err := peerConnection.AddICECandidate(candidate); err != nil {
 		log.Printf("Error adding ICE candidate: %v", err)
 	}

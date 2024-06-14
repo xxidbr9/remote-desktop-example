@@ -14,7 +14,9 @@ func main() {
 
 	app := fiber.New()
 
+	app.Static("/", "./assets")
 	app.Get("/ws", websocket.New(internal_ws.HandleWebSocket))
+
 
 	log.Println("Web server started on :8080")
 	if err := app.Listen(":8080"); err != nil {

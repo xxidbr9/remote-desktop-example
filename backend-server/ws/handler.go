@@ -11,38 +11,38 @@ import (
 
 // HandleWebSocket handles incoming WebSocket connections.
 func HandleWebSocket(c *websocket.Conn) {
-	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{
-		ICEServers: []webrtc.ICEServer{
-			// TODO: change this base on IP
-			{URLs: []string{
-				// "stun:0.0.0.0:3478",
-				"stun:192.168.0.101:3478",
-			}},
-		},
-	})
-	if err != nil {
-		log.Fatalf("Failed to create peer connection: %v", err)
-	}
+	// peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{
+	// 	ICEServers: []webrtc.ICEServer{
+	// 		// TODO: change this base on IP
+	// 		{URLs: []string{
+	// 			// "stun:0.0.0.0:3478",
+	// 			"stun:192.168.0.101:3478",
+	// 		}},
+	// 	},
+	// })
+	// if err != nil {
+	// 	log.Fatalf("Failed to create peer connection: %v", err)
+	// }
 
-	peerConnection.OnICECandidate(func(candidate *webrtc.ICECandidate) {
-		if candidate == nil {
-			return
-		}
-		candidateJSON, err := json.Marshal(candidate.ToJSON())
-		if err != nil {
-			log.Printf("Error marshaling candidate: %v", err)
-			return
-		}
-		log.Println(candidate)
-		if err := c.WriteMessage(websocket.TextMessage, candidateJSON); err != nil {
-			log.Printf("Error sending candidate: %v", err)
-		}
-	})
+	// peerConnection.OnICECandidate(func(candidate *webrtc.ICECandidate) {
+	// 	if candidate == nil {
+	// 		return
+	// 	}
+	// 	candidateJSON, err := json.Marshal(candidate.ToJSON())
+	// 	if err != nil {
+	// 		log.Printf("Error marshaling candidate: %v", err)
+	// 		return
+	// 	}
+	// 	log.Println(candidate)
+	// 	if err := c.WriteMessage(websocket.TextMessage, candidateJSON); err != nil {
+	// 		log.Printf("Error sending candidate: %v", err)
+	// 	}
+	// })
 
-	peerConnection.OnTrack(func(track *webrtc.TrackRemote, receiver *webrtc.RTPReceiver) {
-		// TODO: store to system
-		log.Println("New track received:", track.ID())
-	})
+	// peerConnection.OnTrack(func(track *webrtc.TrackRemote, receiver *webrtc.RTPReceiver) {
+	// 	// TODO: store to system
+	// 	log.Println("New track received:", track.ID())
+	// })
 
 	for {
 		_, message, err := c.ReadMessage()
@@ -57,12 +57,12 @@ func HandleWebSocket(c *websocket.Conn) {
 			continue
 		}
 
-		switch msg["type"] {
-		case "offer":
-			handleOffer(peerConnection, message, c)
-		case "candidate":
-			handleCandidate(peerConnection, message)
-		}
+		// switch msg["type"] {
+		// case "offer":
+		// 	handleOffer(peerConnection, message, c)
+		// case "candidate":
+		// 	handleCandidate(peerConnection, message)
+		// }
 	}
 }
 

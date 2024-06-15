@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 windows-capture = "1.0.17"
 scrap = "0.5"
+webrtc = { git = "https://github.com/webrtc-rs/webrtc" }
